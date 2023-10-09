@@ -5,8 +5,6 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
@@ -25,27 +23,13 @@ contract CosmicCowboys is
     }
     mapping(uint256 => Location) public tokenLocation;
 
-    IERC20 public missionCurrency;
-    IERC1155 public universeAssets;
-    uint256 public fuelTokenId;
-    uint256 public weaponsTokenId;
-
     // Events
     event VisitArea(uint256 indexed tokenId, string location);
-    event LaunchMission(uint256 indexed tokenId, string result);
+    event GetCurrentLocation(uint256 indexed tokenId, string location);
 
     constructor(
-        address initialOwner,
-        address _missionCurrency,
-        address _universeAssets,
-        uint256 _fuelTokenId,
-        uint256 _weaponsTokenId
-    ) ERC721("Cosmic Cowboys", "CCNPC") Ownable(initialOwner) {
-        missionCurrency = IERC20(_missionCurrency);
-        universeAssets = IERC1155(_universeAssets);
-        fuelTokenId = _fuelTokenId;
-        weaponsTokenId = _weaponsTokenId;
-    }
+        address initialOwner
+    ) ERC721("Cosmic Cowboys", "CCNPC") Ownable(initialOwner) {}
 
     function safeMint(address to, string memory uri) public onlyOwner {
         uint256 tokenId = _nextTokenId++;
@@ -60,37 +44,13 @@ contract CosmicCowboys is
         emit VisitArea(tokenId, locationToString(_location));
     }
 
-    // Function to launch a mission
-    function launchMission(uint256 tokenId, string memory moon) external {
-        require(
-            tokenLocation[tokenId] == Location.SupplyDepot,
-            "Need to be in Supply Depot"
-        );
-        require(
-            missionCurrency.transferFrom(
-                msg.sender,
-                address(this),
-                100 * 10 ** 18
-            ),
-            "Payment required"
-        );
-
-        if (
-            universeAssets.balanceOf(msg.sender, fuelTokenId) > 0 &&
-            universeAssets.balanceOf(msg.sender, weaponsTokenId) > 0
-        ) {
-            // Placeholder for successful mission logic
-            string memory successMessage = string(
-                abi.encodePacked("Mission Successful on moon: ", moon)
-            );
-            emit LaunchMission(tokenId, successMessage);
-        } else {
-            // Placeholder for failed mission logic
-            emit LaunchMission(
-                tokenId,
-                "Mission Failed: Missing required items"
-            );
-        }
+    // Function to get the current location of a token
+    function getCurrentLocation(
+        uint256 tokenId
+    ) external view returns (string memory) {
+        Location _location = tokenLocation[tokenId];
+        require(_location != Location(0), "Token does not exist");
+        return locationToString(_location);
     }
 
     // Utility function to convert enum to string
@@ -100,11 +60,6 @@ contract CosmicCowboys is
         if (_location == Location.Home) return "Home";
         if (_location == Location.Bar) return "Bar";
         return "Supply Depot";
-    }
-
-    // Withdraw funds (in case of ERC20 payments accumulation)
-    function withdrawFunds(address to, uint256 amount) external onlyOwner {
-        require(missionCurrency.transfer(to, amount), "Transfer failed");
     }
 
     // The following functions are overrides required by Solidity.
