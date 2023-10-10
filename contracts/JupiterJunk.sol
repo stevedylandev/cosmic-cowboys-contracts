@@ -1,27 +1,25 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 
-contract SetllarSixShooter is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply {
+contract JupiterJunk is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply {
     constructor(
         address initialOwner
-    ) ERC1155("ipfs://CID") Ownable(initialOwner) {}
+    )
+        ERC1155("ipfs://QmUE1hMRA85uaaoYAotPxXzAfVUy4hsMHyyjPXvayQQWHB")
+        Ownable(initialOwner)
+    {}
 
     function setURI(string memory newuri) public onlyOwner {
         _setURI(newuri);
     }
 
-    function mint(
-        address account,
-        uint256 id,
-        uint256 amount,
-        bytes memory data
-    ) public onlyOwner {
-        _mint(account, id, amount, data);
+    function mint(address account, uint256 amount) public onlyOwner {
+        _mint(account, 0, amount, new bytes(0));
     }
 
     function mintBatch(

@@ -1,68 +1,43 @@
 // Import the ethers library
 const { ethers } = require("hardhat");
 
-async function CosmicCoyboys() {
-  let contract;
+async function Operator() {
+
   let owner;
   let addr1;
   let addr2;
+  let deployedAccountTx, deployedAccountReceipt, deployedAccountAddress;
 
   // Get the signers from ethers
   [owner, addr1, addr2] = await ethers.getSigners();
 
-  // Deploy the contract
-  const Contract = await ethers.getContractFactory("CosmicCowboys");
-  contract = await Contract.deploy(owner.address);
-  const contractAddress = await contract.getAddress()
-  console.log("Contract deployed to address:", contractAddress);
+  // Deploy NPC contract
+  const NPCContract = await ethers.getContractFactory("CosmicCowboys");
+  const npcContract = await NPCContract.deploy(owner.address);
+  const npcContractAddress = await npcContract.getAddress()
+  console.log("NPC Contract deploywed to address:", npcContractAddress);
 
-  // Mint tokens
-  await contract.safeMint(addr1.address, "ipfs://QmVLwvmGehsrNEvhcCnnsw5RQNseohgEkFNN1848zNzdng");
-  console.log("Minted token 1");
-  await contract.safeMint(addr2.address, "ipfs://QmVLwvmGehsrNEvhcCnnsw5RQNseohgEkFNN1848zNzdng");
-  console.log("Minted token 2");
+  // Deploy ERC-20 Contract
+  const CurrencyContract = await ethers.getContractFactory("GoldenCorn");
+  const currencyContract = await CurrencyContract.deploy(owner.address);
+  const currencyContractAddress = await currencyContract.getAddress()
+  console.log("NPC Contract deploywed to address:", currencyContractAddress);
 
-  const tokenURI = await contract.tokenURI(1);
-  console.log(tokenURI);
-};
+  // Deploy 1155 Contracts
+  const FoodContract = await ethers.getContractFactory("SpaceSlop");
+  const foodContract = await FoodContract.deploy(owner.address);
+  const foodContractAddress = await foodContract.getAddress()
+  console.log("NPC Contract deploywed to address:", foodContractAddress);
 
-async function GoldenCorn() {
-  let contract;
-  let owner;
-  let addr1;
-  let addr2;
+  const SupplyContract = await ethers.getContractFactory("JupiterJunk");
+  const supplyContract = await SupplyContract.deploy(owner.address);
+  const supplyContractAddress = await supplyContract.getAddress()
+  console.log("NPC Contract deploywed to address:", supplyContractAddress);
 
-  // Get the signers from ethers
-  [owner, addr1, addr2] = await ethers.getSigners();
-
-  // Deploy the contract
-  const Contract = await ethers.getContractFactory("GoldenCorn");
-  contract = await Contract.deploy(owner.address);
-  const contractAddress = await contract.getAddress()
-  console.log("Contract deployed to address:", contractAddress);
-
-  // Mint tokens
-  await contract.mint(addr1.address, 100);
-  console.log("Minted token 1");
-
-  const balance = await contract.balanceOf(addr1.address);
-  console.log(balance)
-
-}
-
-async function TBA() {
-  let contract;
-  let owner;
-  let addr1;
-  let addr2;
-
-  // Get the signers from ethers
-  [owner, addr1, addr2] = await ethers.getSigners();
-
-  // Deploy the contract
+  // Deploy ERC6551
   const RegistryContract = await ethers.getContractFactory("ERC6551Registry");
-  const regristryContract = await RegistryContract.deploy();
-  const registryContractAddress = await regristryContract.getAddress()
+  const registryContract = await RegistryContract.deploy();
+  const registryContractAddress = await registryContract.getAddress()
   console.log("Registry Contract deployed to address:", registryContractAddress);
 
   const AccountContract = await ethers.getContractFactory("ERC6551Account");
@@ -70,6 +45,38 @@ async function TBA() {
   const accountContractAddress = await accountContract.getAddress()
   console.log("Account Contract deployed to address:", accountContractAddress);
 
-}
+  // Deploy Operator Contract
+  const OperatorContract = await ethers.getContractFactory("Operator");
+  const operatorContract = await OperatorContract.deploy(owner.address, npcContractAddress, currencyContractAddress, foodContractAddress, supplyContractAddress)
+  const operatorContractAddress = await operatorContract.getAddress()
+  console.log("Operator Contract deployed to address:", operatorContractAddress)
 
-TBA()
+  // Transfer NPC contract to Operator
+  await npcContract.transferOwnership(operatorContractAddress);
+  await currencyContract.transferOwnership(operatorContractAddress);
+  await foodContract.transferOwnership(operatorContractAddress);
+  await supplyContract.transferOwnership(operatorContractAddress);
+
+  // create NPC
+  const npcTx = await operatorContract.createNPC(owner.address, "ipfs://")
+  const npcTxReceipt = await npcTx.wait()
+
+  // After the NPC is created
+  const latestTokenId = await operatorContract.getLatestTokenId();
+  console.log("Latest Token ID:", latestTokenId.toString());
+
+  // create TBA for NPC
+  deployedAccountTx = await registryContract.createAccount(
+    accountContractAddress,
+    5,
+    npcContractAddress,
+    latestTokenId.toString(),
+    0,
+    "0x"
+  )
+  deployedAccountReceipt = await deployedAccountTx.wait()
+  console.log(deployedAccountReceipt)
+
+  // equip NPC via TBA
+
+}

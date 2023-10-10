@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -16,25 +16,43 @@ contract CosmicCowboys is
     Ownable
 {
     uint256 private _nextTokenId;
+    uint256 public latestTokenId;
     enum Location {
         Home,
         Bar,
         SupplyDepot
     }
     mapping(uint256 => Location) public tokenLocation;
+    mapping(uint256 => uint8) public tokenHealth; // Mapping to store health of each token
 
     // Events
     event VisitArea(uint256 indexed tokenId, string location);
     event GetCurrentLocation(uint256 indexed tokenId, string location);
+    event SetHealth(uint256 indexed tokenId, uint8 health); // Event emitted when health is set
 
     constructor(
         address initialOwner
     ) ERC721("Cosmic Cowboys", "CCNPC") Ownable(initialOwner) {}
 
+    //function to set health
+    function setHealth(uint256 tokenId, uint8 health) public onlyOwner {
+        require(health >= 0 && health <= 10, "Health out of range"); // Check health is within valid range
+        tokenHealth[tokenId] = health;
+        emit SetHealth(tokenId, health); // Emit event
+    }
+
     function safeMint(address to, string memory uri) public onlyOwner {
         uint256 tokenId = _nextTokenId++;
+        latestTokenId = tokenId;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
+        setHealth(tokenId, 10);
+        tokenLocation[tokenId] = Location.Home;
+    }
+
+    // Function to get health of a token
+    function getHealth(uint256 tokenId) external view returns (uint8) {
+        return tokenHealth[tokenId];
     }
 
     // Function to visit a location
@@ -57,9 +75,9 @@ contract CosmicCowboys is
     function locationToString(
         Location _location
     ) internal pure returns (string memory) {
-        if (_location == Location.Home) return "Home";
+        if (_location == Location.SupplyDepot) return "Supply Depot";
         if (_location == Location.Bar) return "Bar";
-        return "Supply Depot";
+        return "Home";
     }
 
     // The following functions are overrides required by Solidity.
@@ -94,5 +112,9 @@ contract CosmicCowboys is
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
+    }
+
+    function getOwner() external view returns (address) {
+        return owner();
     }
 }
