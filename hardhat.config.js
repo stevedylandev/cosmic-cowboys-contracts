@@ -9,9 +9,10 @@ module.exports = {
       url: `${process.env.ALCHEMY_URL}`,
       accounts: [process.env.PRIVATE_KEY]
     },
-    scroll: {
-      url: "https://sepolia-rpc.scroll.io/",
-      accounts: [process.env.PRIVATE_KEY]
+    scrollSepolia: {
+      url: "https://sepolia-rpc.scroll.io/" || "",
+      accounts:
+        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
   }
 

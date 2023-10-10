@@ -15,27 +15,27 @@ async function Operator() {
   const NPCContract = await ethers.getContractFactory("CosmicCowboys");
   const npcContract = await NPCContract.deploy(owner.address);
   const npcContractAddress = await npcContract.getAddress()
-  console.log("NPC Contract deploywed to address:", npcContractAddress);
+  console.log("NPC Contract deployed to address:", npcContractAddress);
 
   // Deploy ERC-20 Contract
   const CurrencyContract = await ethers.getContractFactory("GoldenCorn");
   const currencyContract = await CurrencyContract.deploy(owner.address);
   const currencyContractAddress = await currencyContract.getAddress()
-  console.log("NPC Contract deploywed to address:", currencyContractAddress);
+  console.log("Currency Contract deployed to address:", currencyContractAddress);
 
   // Deploy 1155 Contracts
   const FoodContract = await ethers.getContractFactory("SpaceSlop");
   const foodContract = await FoodContract.deploy(owner.address);
   const foodContractAddress = await foodContract.getAddress()
-  console.log("NPC Contract deploywed to address:", foodContractAddress);
+  console.log("Food Contract deployed to address:", foodContractAddress);
 
   const SupplyContract = await ethers.getContractFactory("JupiterJunk");
   const supplyContract = await SupplyContract.deploy(owner.address);
   const supplyContractAddress = await supplyContract.getAddress()
-  console.log("NPC Contract deploywed to address:", supplyContractAddress);
+  console.log("Supply Contract deployed to address:", supplyContractAddress);
 
   // Deploy ERC6551
-  const RegistryContract = await ethers.getContractFactory("ERC6551Registry");
+  /* const RegistryContract = await ethers.getContractFactory("ERC6551Registry");
   const registryContract = await RegistryContract.deploy();
   const registryContractAddress = await registryContract.getAddress()
   console.log("Registry Contract deployed to address:", registryContractAddress);
@@ -43,7 +43,7 @@ async function Operator() {
   const AccountContract = await ethers.getContractFactory("ERC6551Account");
   const accountContract = await AccountContract.deploy();
   const accountContractAddress = await accountContract.getAddress()
-  console.log("Account Contract deployed to address:", accountContractAddress);
+  console.log("Account Contract deployed to address:", accountContractAddress); */
 
   // Deploy Operator Contract
   const OperatorContract = await ethers.getContractFactory("Operator");
@@ -57,7 +57,7 @@ async function Operator() {
   await foodContract.transferOwnership(operatorContractAddress);
   await supplyContract.transferOwnership(operatorContractAddress);
 
-  // create NPC
+  /* // create NPC
   const npcTx = await operatorContract.createNPC(owner.address, "ipfs://")
   const npcTxReceipt = await npcTx.wait()
 
@@ -75,8 +75,10 @@ async function Operator() {
     "0x"
   )
   deployedAccountReceipt = await deployedAccountTx.wait()
-  console.log(deployedAccountReceipt)
+  console.log(deployedAccountReceipt) */
 
   // equip NPC via TBA
 
 }
+
+Operator()
