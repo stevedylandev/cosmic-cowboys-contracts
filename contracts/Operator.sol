@@ -49,6 +49,14 @@ contract Operator is Ownable {
         jupiterJunk.mint(to, suppliesAmount);
     }
 
+    function getNPCStats(
+        uint256 tokenId
+    ) external view returns (uint8, string memory) {
+        uint8 health = cosmicCowboys.getHealth(tokenId);
+        string memory location = cosmicCowboys.getCurrentLocation(tokenId);
+        return (health, location);
+    }
+
     function getOwner() external view returns (address) {
         return owner();
     }

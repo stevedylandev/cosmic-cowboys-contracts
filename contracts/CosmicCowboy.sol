@@ -47,7 +47,7 @@ contract CosmicCowboys is
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
         setHealth(tokenId, 10);
-        tokenLocation[tokenId] = Location.Home;
+        tokenLocation[tokenId] = Location.Bar;
     }
 
     // Function to get health of a token
