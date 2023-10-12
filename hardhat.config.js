@@ -14,13 +14,29 @@ module.exports = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
-    baseGoerli: {
+    'base-goerli': {
       url: `${process.env.ALCHEMY_URL_BASE}`,
-      accounts: [process.env.PRIVATE_KEY]
+      accounts: [process.env.PRIVATE_KEY],
+      gasPrice: 2000000000,
     }
   },
   etherscan: {
+    apiKey: {
+      "base-goerli": "PLACEHOLDER_STRING"
+    },
+    customChains: [
+      {
+        network: "base-goerli",
+        chainId: 84531,
+        urls: {
+          apiURL: "https://api-goerli.basescan.org/api",
+          browserURL: "https://goerli.basescan.org"
+        }
+      }
+    ]
+  },
+  /* etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY
-  }
+  } */
 
 };

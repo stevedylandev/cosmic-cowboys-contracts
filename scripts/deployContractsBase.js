@@ -1,7 +1,11 @@
 // Import the ethers library
 const { ethers } = require("hardhat");
-const provider = new ethers.AlchemyProvider("base-goerli", process.env.ALCHEMY_KEY_BASE)
+const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_URL_BASE)
 const { TokenboundClient } = require("@tokenbound/sdk");
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 
 async function Operator() {
 
@@ -63,6 +67,7 @@ async function Operator() {
     const npcTx = await operatorContract.createNPC(wallet.address, `ipfs://QmQbwCMwDETHHZ1g8YaSHqLBwCRgVHqFuRNRfiGyNqCcXj/${i}.json`)
     const npcTxReceipt = await npcTx.wait()
     console.log("NPC Created")
+    wait(2000)
 
     // After the NPC is created
     const latestTokenId = await operatorContract.getLatestTokenId();
@@ -73,6 +78,7 @@ async function Operator() {
       tokenId: latestTokenId,
     })
     console.log("TBA:", tba)
+    wait(4000)
 
     // equip NPC via TBA
 
