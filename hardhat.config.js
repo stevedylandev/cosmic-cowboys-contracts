@@ -13,6 +13,8 @@ module.exports = {
       url: "https://sepolia-rpc.scroll.io/" || "",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      gasPrice: 1500000000,
+
     },
     'base-goerli': {
       url: `${process.env.ALCHEMY_URL_BASE}`,

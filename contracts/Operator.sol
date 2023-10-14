@@ -58,10 +58,8 @@ contract Operator is Ownable {
         return (health, location);
     }
 
-    function goToHome(uint256 tokenId) public {
-        //require(cosmicCowboys.ownerOf(tokenId) == tba, "Not owner"); // Check OwnershipTransferred
-        cosmicCowboys.goToHome(tokenId);
-        uint8 newHealth = cosmicCowboys.getHealth(tokenId) + 2;
+    function launchSupplyMission(uint256 tokenId) public {
+        uint8 newHealth = cosmicCowboys.getHealth(tokenId) - 2;
         cosmicCowboys.setHealth(tokenId, newHealth);
     }
 
@@ -71,6 +69,13 @@ contract Operator is Ownable {
 
     function goToSupplyDepot(uint256 tokenId) public {
         cosmicCowboys.goToSupplyDepot(tokenId);
+    }
+
+    function goToHome(uint256 tokenId) public {
+        //require(cosmicCowboys.ownerOf(tokenId) == tba, "Not owner"); // Check OwnershipTransferred
+        cosmicCowboys.goToHome(tokenId);
+        uint8 newHealth = cosmicCowboys.getHealth(tokenId) + 2;
+        cosmicCowboys.setHealth(tokenId, newHealth);
     }
 
     function getOwner() external view returns (address) {
