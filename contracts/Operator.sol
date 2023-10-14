@@ -38,15 +38,16 @@ contract Operator is Ownable {
         return cosmicCowboys.latestTokenId();
     }
 
-    function equipNPC(
-        address to,
-        uint256 currencyAmount,
-        uint256 foodAmount,
-        uint256 suppliesAmount
-    ) public {
-        goldenCorn.mint(to, currencyAmount);
-        spaceSlop.mint(to, foodAmount);
-        jupiterJunk.mint(to, suppliesAmount);
+    function fundNPC(address to, uint256 amount) public {
+        goldenCorn.mint(to, amount);
+    }
+
+    function feedNPC(address to, uint256 amount) public {
+        spaceSlop.mint(to, amount);
+    }
+
+    function supplyNPC(address to, uint256 amount) public {
+        jupiterJunk.mint(to, amount);
     }
 
     function getNPCStats(
@@ -55,6 +56,21 @@ contract Operator is Ownable {
         uint8 health = cosmicCowboys.getHealth(tokenId);
         string memory location = cosmicCowboys.getCurrentLocation(tokenId);
         return (health, location);
+    }
+
+    function goToHome(uint256 tokenId) public {
+        //require(cosmicCowboys.ownerOf(tokenId) == tba, "Not owner"); // Check OwnershipTransferred
+        cosmicCowboys.goToHome(tokenId);
+        uint8 newHealth = cosmicCowboys.getHealth(tokenId) + 2;
+        cosmicCowboys.setHealth(tokenId, newHealth);
+    }
+
+    function goToBar(uint256 tokenId) public {
+        cosmicCowboys.goToBar(tokenId);
+    }
+
+    function goToSupplyDepot(uint256 tokenId) public {
+        cosmicCowboys.goToSupplyDepot(tokenId);
     }
 
     function getOwner() external view returns (address) {

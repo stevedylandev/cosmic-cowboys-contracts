@@ -58,7 +58,7 @@ async function Operator() {
   await foodContract.transferOwnership(operatorContractAddress);
   await supplyContract.transferOwnership(operatorContractAddress);
 
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 19; i++) {
     // create NPC
     const npcTx = await operatorContract.createNPC(wallet.address, `ipfs://QmQbwCMwDETHHZ1g8YaSHqLBwCRgVHqFuRNRfiGyNqCcXj/${i}.json`)
     const npcTxReceipt = await npcTx.wait()
@@ -75,11 +75,22 @@ async function Operator() {
     console.log("TBA:", tba)
 
     // equip NPC via TBA
+    //
+    const fundNpcTx = await operatorContract.fundNPC(tba, 20)
+    const fundNpxTxReceipt = await fundNpcTx.wait()
+    console.log("NPC Funded")
 
-    const equipTx = await operatorContract.equipNPC(tba, 20, 5, 5)
-    const equipTxReceipt = await equipTx.wait()
-    console.log("NPC Equipped")
+    const feedNpcTx = await operatorContract.feedNPC(tba, 5)
+    const feedNpcTxReceipt = await feedNpcTx.wait()
+    console.log("NPC Fed")
+
+    const supplyNpcTx = await operatorContract.supplyNPC(tba, 5)
+    const supplyNpcTxReceipt = await supplyNpcTx.wait()
+    console.log("NPC Supplied")
+
   }
+
+
 
 
 }

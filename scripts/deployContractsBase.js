@@ -82,9 +82,19 @@ async function Operator() {
 
     // equip NPC via TBA
 
-    const equipTx = await operatorContract.equipNPC(tba, 20, 5, 5)
+    /* const fundTx = await operatorContract.fundNPC(tba, 20)
+    const fundTxReceipt = await fundTx.wait()
+    console.log("NPC Funded") */
+    const giveFoodTx = await operatorContract.giveFood(tba, 1)
+    const giveFoodTxReceipt = await giveFoodTx.wait()
+    console.log("NPC Fed")
+    /* const giveSupplyTx = await operatorContract.supplyNPC(tba, 5)
+    const giveSupplyTxReceipt = await giveSupplyTx.wait()
+    console.log("NPC Supplied") */
+
+    /* const equipTx = await operatorContract.equipNPC(tba, 20, 5, 5)
     const equipTxReceipt = await equipTx.wait()
-    console.log("NPC Equipped")
+    console.log("NPC Equipped") */
   }
 
 

@@ -46,7 +46,7 @@ contract CosmicCowboys is
         latestTokenId = tokenId;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
-        setHealth(tokenId, 10);
+        setHealth(tokenId, 6);
         tokenLocation[tokenId] = Location.Bar;
     }
 
@@ -56,10 +56,20 @@ contract CosmicCowboys is
     }
 
     // Function to visit a location
-    function visitArea(uint256 tokenId, Location _location) external {
-        require(ownerOf(tokenId) == msg.sender, "Not owner");
-        tokenLocation[tokenId] = _location;
-        emit VisitArea(tokenId, locationToString(_location));
+
+    function goToHome(uint256 tokenId) external {
+        tokenLocation[tokenId] = Location.Home;
+        emit VisitArea(tokenId, locationToString(Location.Home));
+    }
+
+    function goToBar(uint256 tokenId) external {
+        tokenLocation[tokenId] = Location.Bar;
+        emit VisitArea(tokenId, locationToString(Location.Bar));
+    }
+
+    function goToSupplyDepot(uint256 tokenId) external {
+        tokenLocation[tokenId] = Location.SupplyDepot;
+        emit VisitArea(tokenId, locationToString(Location.SupplyDepot));
     }
 
     // Function to get the current location of a token
@@ -67,7 +77,6 @@ contract CosmicCowboys is
         uint256 tokenId
     ) external view returns (string memory) {
         Location _location = tokenLocation[tokenId];
-        require(_location != Location(0), "Token does not exist");
         return locationToString(_location);
     }
 

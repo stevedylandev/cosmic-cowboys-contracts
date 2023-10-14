@@ -7,7 +7,7 @@ module.exports = {
   networks: {
     goerli: {
       url: `${process.env.ALCHEMY_URL}`,
-      accounts: [process.env.PRIVATE_KEY]
+      accounts: [process.env.PRIVATE_KEY],
     },
     scrollSepolia: {
       url: "https://sepolia-rpc.scroll.io/" || "",
@@ -17,10 +17,14 @@ module.exports = {
     'base-goerli': {
       url: `${process.env.ALCHEMY_URL_BASE}`,
       accounts: [process.env.PRIVATE_KEY],
-      gasPrice: 2000000000,
+      gasPrice: 1000000000,
+    },
+    sepolia: {
+      url: `${process.env.SEPOLIA_URL}`,
+      accounts: [process.env.PRIVATE_KEY],
     }
   },
-  etherscan: {
+  /* etherscan: {
     apiKey: {
       "base-goerli": "PLACEHOLDER_STRING"
     },
@@ -34,9 +38,9 @@ module.exports = {
         }
       }
     ]
-  },
-  /* etherscan: {
+  }, */
+  etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY
-  } */
+  }
 
 };
