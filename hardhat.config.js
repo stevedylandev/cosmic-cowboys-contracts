@@ -3,7 +3,15 @@ require('dotenv').config()
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  solidity: "0.8.20",
+  solidity: {
+    version: "0.8.20",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 10000
+      }
+    }
+  },
   networks: {
     goerli: {
       url: `${process.env.ALCHEMY_URL}`,
@@ -19,7 +27,9 @@ module.exports = {
     'base-goerli': {
       url: `${process.env.ALCHEMY_URL_BASE}`,
       accounts: [process.env.PRIVATE_KEY],
-      gasPrice: 1000000000,
+      gasPrice: 1500000000,
+      allowUnlimitedContractSize: true,
+
     },
     sepolia: {
       url: `${process.env.SEPOLIA_URL}`,
@@ -27,6 +37,9 @@ module.exports = {
     }
   },
   /* etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY
+  }, */
+  etherscan: {
     apiKey: {
       "base-goerli": "PLACEHOLDER_STRING"
     },
@@ -40,9 +53,6 @@ module.exports = {
         }
       }
     ]
-  }, */
-  etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY
-  }
+  },
 
 };

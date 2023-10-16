@@ -2,17 +2,27 @@
 const { ethers } = require("hardhat");
 const provider = new ethers.JsonRpcProvider(process.env.ALCHEMY_URL_BASE)
 const { TokenboundClient } = require("@tokenbound/sdk");
-function wait(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+const { createWalletClient, http } = require('viem')
+const { privateKeyToAccount } = require('viem/accounts')
+const { baseGoerli } = require('viem/chains')
+const registryContractAddress = "0xae470391D4dee2ca9CA33192e1865b45F47F3527"
+const accountContractAddress = "0xF4df15ED8002BDB96F263702CeeB94f5FCB28aBc"
 
+const account = privateKeyToAccount(`0x` + process.env.PRIVATE_KEY)
+
+const walletClient = createWalletClient({
+  account,
+  chain: baseGoerli,
+  transport: http(process.env.ALCHEMY_URL_BASE)
+})
 
 async function Operator() {
 
-
+  const network = await provider.getNetwork()
+  const chainId = network.chainId
+  console.log(chainId)
   // Get the signers from ethers
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
-  const tokenboundClient = new TokenboundClient({ signer: wallet, chainId: 84531 })
   console.log(`SERVER_WALLET_PRIVATE_KEY=${process.env.PRIVATE_KEY}`)
   console.log(`SERVER_WALLET_ADDRESS=${wallet.address}`)
 
@@ -39,8 +49,8 @@ async function Operator() {
   const supplyContractAddress = await supplyContract.getAddress()
   console.log(`SUPPLY_CONTRACT_ADDRESS=${supplyContractAddress}`);
 
-  // Deploy ERC6551
-  /* const RegistryContract = await ethers.getContractFactory("ERC6551Registry");
+  /* // Deploy ERC6551
+  const RegistryContract = await ethers.getContractFactory("ERC6551Registry");
   const registryContract = await RegistryContract.deploy();
   const registryContractAddress = await registryContract.getAddress()
   console.log("Registry Contract deployed to address:", registryContractAddress);
@@ -62,12 +72,18 @@ async function Operator() {
   await foodContract.transferOwnership(operatorContractAddress);
   await supplyContract.transferOwnership(operatorContractAddress);
 
-  for (let i = 0; i < 2; i++) {
+  const tokenboundClient = new TokenboundClient({
+    walletClient: walletClient,
+    chain: baseGoerli,
+    implementationAddress: accountContractAddress,
+    registryAddress: registryContractAddress,
+  })
+
+  for (let i = 0; i < 20; i++) {
     // create NPC
     const npcTx = await operatorContract.createNPC(wallet.address, `ipfs://QmQbwCMwDETHHZ1g8YaSHqLBwCRgVHqFuRNRfiGyNqCcXj/${i}.json`)
     const npcTxReceipt = await npcTx.wait()
     console.log("NPC Created")
-    wait(2000)
 
     // After the NPC is created
     const latestTokenId = await operatorContract.getLatestTokenId();
@@ -78,26 +94,21 @@ async function Operator() {
       tokenId: latestTokenId,
     })
     console.log("TBA:", tba)
-    wait(4000)
 
     // equip NPC via TBA
+    const fundNpcTx = await operatorContract.fundNPC(tba, 20)
+    const fundNpxTxReceipt = await fundNpcTx.wait()
+    console.log("NPC Funded")
 
-    /* const fundTx = await operatorContract.fundNPC(tba, 20)
-    const fundTxReceipt = await fundTx.wait()
-    console.log("NPC Funded") */
-    const giveFoodTx = await operatorContract.giveFood(tba, 1)
-    const giveFoodTxReceipt = await giveFoodTx.wait()
+    const feedNpcTx = await operatorContract.feedNPC(tba, 5)
+    const feedNpcTxReceipt = await feedNpcTx.wait()
     console.log("NPC Fed")
-    /* const giveSupplyTx = await operatorContract.supplyNPC(tba, 5)
-    const giveSupplyTxReceipt = await giveSupplyTx.wait()
-    console.log("NPC Supplied") */
 
-    /* const equipTx = await operatorContract.equipNPC(tba, 20, 5, 5)
-    const equipTxReceipt = await equipTx.wait()
-    console.log("NPC Equipped") */
+    const supplyNpcTx = await operatorContract.supplyNPC(tba, 5)
+    const supplyNpcTxReceipt = await supplyNpcTx.wait()
+    console.log("NPC Supplied")
+
   }
-
-
 }
 
 Operator()
