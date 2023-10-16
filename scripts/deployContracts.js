@@ -3,7 +3,7 @@ const { ethers } = require("hardhat");
 const provider = new ethers.AlchemyProvider("goerli", process.env.ALCHEMY_KEY)
 const { TokenboundClient } = require("@tokenbound/sdk");
 
-async function Operator() {
+async function Main() {
 
 
   // Get the signers from ethers
@@ -89,10 +89,6 @@ async function Operator() {
     console.log("NPC Supplied")
 
   }
-
-
-
-
 }
 
-Operator()
+Main()

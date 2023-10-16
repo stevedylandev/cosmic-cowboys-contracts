@@ -16,7 +16,7 @@ const walletClient = createWalletClient({
   transport: http(process.env.ALCHEMY_URL_BASE)
 })
 
-async function Operator() {
+async function Main() {
 
   const network = await provider.getNetwork()
   const chainId = network.chainId
@@ -111,4 +111,4 @@ async function Operator() {
   }
 }
 
-Operator()
+Main()
