@@ -88,6 +88,10 @@ contract Operator is Ownable {
         goldenCorn.mint(tba, 5);
     }
 
+    function whitelist(address tba, bool status) public onlyOwner {
+        goldenCorn.setWhitelisted(tba, status);
+    }
+
     function withdraw() public onlyOwner {
         uint256 balance = address(this).balance;
         payable(owner()).transfer(balance);
