@@ -2,6 +2,18 @@
 const { ethers } = require("hardhat");
 const provider = new ethers.getDefaultProvider("https://sepolia-rpc.scroll.io/")
 const { TokenboundClient } = require("@tokenbound/sdk");
+const { createWalletClient, http } = require('viem')
+const { privateKeyToAccount } = require('viem/accounts')
+const { scrollSepolia } = require('viem/chains')
+
+const account = privateKeyToAccount(`0x` + process.env.TEST_PRIVATE_KEY)
+
+const walletClient = createWalletClient({
+  account,
+  chain: scrollSepolia,
+  transport: http("https://sepolia-rpc.scroll.io/")
+})
+
 
 async function Main() {
 
@@ -35,7 +47,7 @@ async function Main() {
   console.log(`SUPPLY_CONTRACT_ADDRESS=${supplyContractAddress}`);
 
   // Deploy ERC6551
-  /* const RegistryContract = await ethers.getContractFactory("ERC6551Registry");
+  const RegistryContract = await ethers.getContractFactory("ERC6551Registry");
   const registryContract = await RegistryContract.deploy();
   const registryContractAddress = await registryContract.getAddress()
   console.log("Registry Contract deployed to address:", registryContractAddress);
@@ -43,7 +55,7 @@ async function Main() {
   const AccountContract = await ethers.getContractFactory("ERC6551Account");
   const accountContract = await AccountContract.deploy();
   const accountContractAddress = await accountContract.getAddress()
-  console.log("Account Contract deployed to address:", accountContractAddress); */
+  console.log("Account Contract deployed to address:", accountContractAddress);
 
   // Deploy Operator Contract
   const OperatorContract = await ethers.getContractFactory("Operator");
@@ -56,6 +68,14 @@ async function Main() {
   await currencyContract.transferOwnership(operatorContractAddress);
   await foodContract.transferOwnership(operatorContractAddress);
   await supplyContract.transferOwnership(operatorContractAddress);
+
+  const tokenboundClient = new TokenboundClient({
+    walletClient: walletClient,
+    chain: scrollSepolia,
+    implementationAddress: accountContractAddress,
+    registryAddress: registryContractAddress,
+  })
+
 
   /* for (let i = 0; i < 19; i++) {
     // create NPC

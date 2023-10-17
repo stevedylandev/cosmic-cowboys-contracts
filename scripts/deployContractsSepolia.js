@@ -9,7 +9,8 @@ async function Main() {
   // Get the signers from ethers
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
   const tokenboundClient = new TokenboundClient({ signer: wallet, chainId: 11155111 })
-  console.log(`SERVER_WALLET_PRIVATE_KEY=${process.env.PRIVATE_KEY}`) console.log(`SERVER_WALLET_ADDRESS=${wallet.address}`)
+  console.log(`SERVER_WALLET_PRIVATE_KEY=${process.env.PRIVATE_KEY}`)
+  console.log(`SERVER_WALLET_ADDRESS=${wallet.address}`)
 
   // Deploy NPC contract
   const NPCContract = await ethers.getContractFactory("CosmicCowboys");
