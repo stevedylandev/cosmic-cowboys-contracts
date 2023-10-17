@@ -22,7 +22,7 @@ module.exports = {
     scrollSepolia: {
       url: "https://sepolia-rpc.scroll.io/" || "",
       accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+        process.env.TEST_PRIVATE_KEY !== undefined ? [process.env.TEST_PRIVATE_KEY] : [],
       gasPrice: 1500000000,
 
     },
