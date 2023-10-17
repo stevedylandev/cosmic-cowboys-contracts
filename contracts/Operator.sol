@@ -16,6 +16,7 @@ contract Operator is Ownable {
     JupiterJunk public jupiterJunk;
 
     uint256 public newTokenId;
+    uint256 public constant donationAmount = 10 ** 15;
 
     constructor(
         address initialOwner,
@@ -78,7 +79,12 @@ contract Operator is Ownable {
         cosmicCowboys.setHealth(tokenId, newHealth);
     }
 
-    function getOwner() external view returns (address) {
-        return owner();
+    function donate(address tba) external payable {
+        require(
+            msg.value == donationAmount,
+            "Donation amount must be exactly 0.001 Ether"
+        );
+
+        goldenCorn.mint(tba, 5);
     }
 }

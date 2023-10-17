@@ -16,6 +16,8 @@ module.exports = {
     goerli: {
       url: `${process.env.ALCHEMY_URL}`,
       accounts: [process.env.PRIVATE_KEY],
+      gasPrice: 1500000000,
+
     },
     scrollSepolia: {
       url: "https://sepolia-rpc.scroll.io/" || "",
@@ -36,10 +38,10 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
     }
   },
-  /* etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY
-  }, */
   etherscan: {
+    apiKey: process.env.ETHERSCAN_API_KEY
+  },
+  /* etherscan: {
     apiKey: {
       "base-goerli": "PLACEHOLDER_STRING"
     },
@@ -53,6 +55,6 @@ module.exports = {
         }
       }
     ]
-  },
+  }, */
 
 };

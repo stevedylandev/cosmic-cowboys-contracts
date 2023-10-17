@@ -1,40 +1,37 @@
 // Import the ethers library
 const { ethers } = require("hardhat");
-const { TokenboundClient } = require("@tokenbound/sdk");
 const provider = new ethers.AlchemyProvider("goerli", process.env.ALCHEMY_KEY)
-const operatorAbi = require("../artifacts/contracts/Operator.sol/Operator.json")
+const { TokenboundClient } = require("@tokenbound/sdk");
 
+async function Main() {
 
-async function Operator() {
 
   // Get the signers from ethers
-  let owner;
-  [owner] = await ethers.getSigners();
-  const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider)
-  console.log(`SERVER_WALLET_PRIVATE_KEY=${process.env.PRIVATE_KEY}`)
-  console.log(`SERVER_WALLET_ADDRESS=${wallet.address}`)
+  const wallet = new ethers.Wallet(process.env.TEST_PRIVATE_KEY, provider)
   const tokenboundClient = new TokenboundClient({ signer: wallet, chainId: 5 })
+  console.log(`SERVER_WALLET_PRIVATE_KEY=${process.env.TEST_PRIVATE_KEY}`)
+  console.log(`SERVER_WALLET_ADDRESS=${wallet.address}`)
 
   // Deploy NPC contract
   const NPCContract = await ethers.getContractFactory("CosmicCowboys");
-  const npcContract = await NPCContract.deploy(owner.address);
+  const npcContract = await NPCContract.deploy(wallet.address);
   const npcContractAddress = await npcContract.getAddress()
   console.log(`NPC_CONTRACT_ADDRESS=${npcContractAddress}`);
 
   // Deploy ERC-20 Contract
   const CurrencyContract = await ethers.getContractFactory("GoldenCorn");
-  const currencyContract = await CurrencyContract.deploy(owner.address);
+  const currencyContract = await CurrencyContract.deploy(wallet.address);
   const currencyContractAddress = await currencyContract.getAddress()
   console.log(`CURRENCY_CONTRACT_ADDRESS=${currencyContractAddress}`)
 
   // Deploy 1155 Contracts
   const FoodContract = await ethers.getContractFactory("SpaceSlop");
-  const foodContract = await FoodContract.deploy(owner.address);
+  const foodContract = await FoodContract.deploy(wallet.address);
   const foodContractAddress = await foodContract.getAddress()
   console.log(`FOOD_CONTRACT_ADDRESS=${foodContractAddress}`);
 
   const SupplyContract = await ethers.getContractFactory("JupiterJunk");
-  const supplyContract = await SupplyContract.deploy(owner.address);
+  const supplyContract = await SupplyContract.deploy(wallet.address);
   const supplyContractAddress = await supplyContract.getAddress()
   console.log(`SUPPLY_CONTRACT_ADDRESS=${supplyContractAddress}`);
 
@@ -51,49 +48,51 @@ async function Operator() {
 
   // Deploy Operator Contract
   const OperatorContract = await ethers.getContractFactory("Operator");
-  const operatorContract = await OperatorContract.deploy(owner.address, npcContractAddress, currencyContractAddress, foodContractAddress, supplyContractAddress)
+  const operatorContract = await OperatorContract.deploy(wallet.address, npcContractAddress, currencyContractAddress, foodContractAddress, supplyContractAddress)
   const operatorContractAddress = await operatorContract.getAddress()
-  console.log("OPERATOR_CONTRACT_ADDRESS", operatorContractAddress)
-
-  /* const operatorContract = new ethers.Contract("0x575C0B5777eF7F620E51ff33b33ccB854B856e84", operatorAbi.abi, wallet)
-  npcContractAddress = "0xF0fEFC86335E227c85aA778b24061B6B70B80Ef4" */
+  console.log(`OPERATOR_CONTRACT_ADDRESS=${operatorContractAddress}`)
 
   // Transfer NPC contract to Operator
   await npcContract.transferOwnership(operatorContractAddress);
   await currencyContract.transferOwnership(operatorContractAddress);
   await foodContract.transferOwnership(operatorContractAddress);
   await supplyContract.transferOwnership(operatorContractAddress);
+  console.log("ownership transferred")
 
-  const npcTx = await operatorContract.createNPC(owner.address, `ipfs://QmQbwCMwDETHHZ1g8YaSHqLBwCRgVHqFuRNRfiGyNqCcXj/1.json`)
+  // create NPC
+  const npcTx = await operatorContract.createNPC(wallet.address, `ipfs://QmQbwCMwDETHHZ1g8YaSHqLBwCRgVHqFuRNRfiGyNqCcXj/0.json`)
   const npcTxReceipt = await npcTx.wait()
-  console.log("NFT Minted")
+  console.log("NPC Created")
 
-  const stats = await operatorContract.getNPCStats(0)
-  console.log(stats)
+  // After the NPC is created
+  const latestTokenId = await operatorContract.getLatestTokenId();
 
+  // create TBA for NPC
+  const tba = await tokenboundClient.createAccount({
+    tokenContract: npcContractAddress,
+    tokenId: latestTokenId,
+  })
+  console.log("TBA:", tba)
 
-  /* for (let i = 16; i < 21; i++) {
-    // create NPC
-    const npcTx = await operatorContract.createNPC(owner.address, `ipfs://QmQbwCMwDETHHZ1g8YaSHqLBwCRgVHqFuRNRfiGyNqCcXj/${i}.json`)
-    const npcTxReceipt = await npcTx.wait()
-    console.log("NPC Created")
+  // equip NPC via TBA
+  //
+  /* const fundNpcTx = await operatorContract.fundNPC(tba, 20)
+  const fundNpxTxReceipt = await fundNpcTx.wait()
+  console.log("NPC Funded")
 
-    // After the NPC is created
-    const latestTokenId = await operatorContract.getLatestTokenId();
+  const feedNpcTx = await operatorContract.feedNPC(tba, 5)
+  const feedNpcTxReceipt = await feedNpcTx.wait()
+  console.log("NPC Fed")
 
-    // create TBA for NPC
-    const tba = await tokenboundClient.createAccount({
-      tokenContract: npcContractAddress,
-      tokenId: latestTokenId,
-    })
-    console.log("TBA:", tba)
+  const supplyNpcTx = await operatorContract.supplyNPC(tba, 5)
+  const supplyNpcTxReceipt = await supplyNpcTx.wait()
+  console.log("NPC Supplied") */
 
-    // equip NPC via TBA
+  const donationAmount = ethers.parseEther("0.001")
+  const donateNpcTx = await operatorContract.donate(tba, { value: donationAmount })
+  const donateNpcTxReceipt = await donateNpcTx.wait()
+  console.log("NPC Donated")
 
-    const equipTx = await operatorContract.equipNPC(tba, 20, 5, 5)
-    const equipTxReceipt = await equipTx.wait()
-    console.log("NPC Equipped")
-  } */
 }
 
-Operator()
+Main()

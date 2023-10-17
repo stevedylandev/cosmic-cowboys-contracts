@@ -58,7 +58,7 @@ async function Main() {
   await foodContract.transferOwnership(operatorContractAddress);
   await supplyContract.transferOwnership(operatorContractAddress);
 
-  for (let i = 0; i < 19; i++) {
+  for (let i = 0; i < 20; i++) {
     // create NPC
     const npcTx = await operatorContract.createNPC(wallet.address, `ipfs://QmQbwCMwDETHHZ1g8YaSHqLBwCRgVHqFuRNRfiGyNqCcXj/${i}.json`)
     const npcTxReceipt = await npcTx.wait()
