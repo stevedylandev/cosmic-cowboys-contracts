@@ -2,7 +2,7 @@
 
 This repo contains the Solidity smart contracts for Cosmic Cowboys, a dynamic on-chain game that gives life to NPC using ERC-6551 and AI.
 
-> ** ℹ️ To see the repo for the front end app portion of this project, please visit [polluterofminds/cosmic-cowboys-app](https://github.com/polluterofminds/cosmic-cowboys-app) **
+> ### ℹ️ To see the repo for the front end app portion of this project, please visit [polluterofminds/cosmic-cowboys-app](https://github.com/polluterofminds/cosmic-cowboys-app)
 
 The project consists of several elements: 
 - A primary key that can deploy / own the contracts 
