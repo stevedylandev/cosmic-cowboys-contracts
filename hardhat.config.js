@@ -15,7 +15,7 @@ module.exports = {
   networks: {
     goerli: {
       url: `${process.env.ALCHEMY_URL}`,
-      accounts: [process.env.PRIVATE_KEY],
+      accounts: [process.env.TEST_PRIVATE_KEY],
       gasPrice: 1500000000,
 
     },

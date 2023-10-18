@@ -75,16 +75,20 @@ async function Main() {
   console.log("TBA:", tba)
 
   // equip NPC via TBA
-  //
-  /* const fundNpcTx = await operatorContract.fundNPC(tba, 20)
+
+  /* const feedNpcTx = await operatorContract.feedNPC(tba, 5)
+  const feedNpcTxReceipt = await feedNpcTx.wait()
+  console.log("NPC Fed") */
+
+  const whitelistNpcTx = await operatorContract.whitelist(tba, true)
+  const whitelistNpcTxReceipt = await whitelistNpcTx.wait()
+  console.log("NPC Whitelisted")
+
+  const fundNpcTx = await operatorContract.fundNPC(tba, 20)
   const fundNpxTxReceipt = await fundNpcTx.wait()
   console.log("NPC Funded")
 
-  const feedNpcTx = await operatorContract.feedNPC(tba, 5)
-  const feedNpcTxReceipt = await feedNpcTx.wait()
-  console.log("NPC Fed")
-
-  const supplyNpcTx = await operatorContract.supplyNPC(tba, 5)
+  /* const supplyNpcTx = await operatorContract.supplyNPC(tba, 5)
   const supplyNpcTxReceipt = await supplyNpcTx.wait()
   console.log("NPC Supplied") */
 
